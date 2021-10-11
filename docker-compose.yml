@@ -1,0 +1,27 @@
+services:
+
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:5000 main:app
+    volumes:
+      - .:/app
+    depends_on:
+      - mongodb
+
+  mongodb:
+      image: mongo
+      container_name: mongodb
+      environment:
+        - PUID=1000
+        - PGID=1000
+      volumes:
+        - /home/PycharmProjects/SLtest/database
+      ports:
+        - "27017:27017"
+      restart: unless-stopped
+  nginx:
+    build: ./nginx
+    ports:
+      - "1337:80"
+    depends_on:
+      - web
